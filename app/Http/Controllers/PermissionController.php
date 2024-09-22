@@ -4,11 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Permission\StorePermissionRequest;
 use App\Http\Requests\Permission\UpdatePermissionRequest;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\Routing\Controllers\HasMiddleware;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        // Define permissions for actions
+        $this->middleware('permission:permission create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:permission edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:permission delete', ['only' => ['destroy']]);
+        $this->middleware('permission:permission view', ['only' => ['index']]);
+    }
     /**
      * Display a listing of the resource.
      */

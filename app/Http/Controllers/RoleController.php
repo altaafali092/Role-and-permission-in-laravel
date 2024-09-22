@@ -4,14 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Roles\StoreRoleRequest;
 use App\Http\Requests\Roles\UpdateRoleRequest;
+use GuzzleHttp\Middleware;
 use Illuminate\Http\Request;
-
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controller;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Validator;
+
 
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        // Define permissions for actions
+        $this->middleware('permission:role create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:role edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:role delete', ['only' => ['destroy']]);
+        $this->middleware('permission:role view', ['only' => ['index']]);
+    }
     /**
      * Display a listing of the resource.
      */

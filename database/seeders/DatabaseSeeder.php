@@ -5,20 +5,24 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
+
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create the Super Admin role using Spatie's Role model
+        $superAdminRole = Role::firstOrCreate(['name' => 'superadmin']);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password'=>bcrypt('password'),
+        // Create the Super Admin user
+        $user = User::factory()->create([
+            'name' => 'Super Admin',
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('password'), // Use bcrypt for hashing the password
         ]);
+
+        // Assign the Super Admin role to the user
+        $user->assignRole($superAdminRole);
     }
 }
