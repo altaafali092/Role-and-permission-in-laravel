@@ -24,10 +24,7 @@
                             <div class="my-3">
                                 <input type="text" class="border-gray-300 shadow-sm w-1/2 rounded-lg input-color" name="email" placeholder="Enter name" value="{{ old('email',$user->email) }}" id="name" required>
                             </div>
-                            <label for="name" class="text-lg font-medium">Name</label>
-                            {{-- <div class="my-3">
-                                <input type="text" class="border-gray-300 shadow-sm w-1/2 rounded-lg input-color" name="name" placeholder="Enter name" value="{{ old('name') }}" id="name" required>
-                            </div> --}}
+
 
                             <div class="grid grid-cols-4 mb-3">
                                 @if ($roles->isNotEmpty())

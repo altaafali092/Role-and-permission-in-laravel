@@ -35,7 +35,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::orderBy('name', 'ASC')->get();
+        return view('users.create', compact('roles'));
     }
 
     /**
@@ -43,8 +44,30 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:5|same:confirm_password',
+            'confirm_password' => 'required',
+            'role' => 'required|array|exists:roles,name',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $user->syncRoles($request->role);
+        toast('User created successfully', 'success');
+
+        return redirect()->route('users.index');
     }
+
 
     /**
      * Display the specified resource.
@@ -97,8 +120,23 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        if ($user->id == auth()->user()->id) {
+            toast('You cannot delete yourself', 'error');
+            return back();
+        }
+        if($user->hasRole('Super Admin')){
+            toast('You cannot delete super admin', 'error');
+            return back();
+        }
+        if($user->status === 1){
+            toast('You cannot delete user', 'error');
+            return back();
+        }
+
+        $user->delete();
+        toast('User deleted successfully', 'success');
+        return back();
     }
 }
